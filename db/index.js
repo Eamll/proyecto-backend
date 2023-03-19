@@ -15,16 +15,17 @@ connectDb();
 app.use(express.json());
 
 //Rutas
-const rutas = require("../routes/catalogo");
+const rutasCatalogo = require("../routes/catalogo/catalogo");
+const rutasSubcategoria = require("../routes/catalogo/subcategoria");
+
+
 
 //Cargo las rutas
-app.use("/api/catalogo", rutas);
-
-// Import all the Sequelize models
+app.use("/api/catalogo", rutasCatalogo);
+app.use("/api/subcategoria", rutasSubcategoria);
 
 
 app.listen(port, () => {
     console.log(`Express server listening on port ${port}`);
 });
 
-module.exports = app;

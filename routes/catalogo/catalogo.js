@@ -1,9 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const controlador = require("../controllers/catalogo");
+const controlador = require("../../controllers/catalogo/catalogo");
 
 //Rutas de catalogos
-router.get('/', (req, res) => { res.send('Hello World!'); });
 router.post("/crear", controlador.crearCatalogo);
 router.get("/mostrar", controlador.mostrarCatalogos);
 router.route("/id/:id")

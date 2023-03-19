@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../../connection');
 
+
 const Catalogo = sequelize.define('catalogo', {
     id: {
         type: DataTypes.INTEGER,

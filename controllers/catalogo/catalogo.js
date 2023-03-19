@@ -1,6 +1,6 @@
-
 const { Op } = require('sequelize');
-const { Catalogo } = require('../db/models/catalogo');
+const { Catalogo } = require('../../db/models/catalogo');
+
 
 
 const crearCatalogo = async (req, res) => {
@@ -12,7 +12,6 @@ const crearCatalogo = async (req, res) => {
         if (duplicado) {
             return res.status(400).send({ status: "error", message });
         }
-
 
         const nuevoCatalogo = await Catalogo.create({
             nombre,
@@ -38,8 +37,6 @@ const crearCatalogo = async (req, res) => {
         });
     }
 };
-
-
 
 const obtCatalogoPorId = async (req, res) => {
     try {
@@ -74,7 +71,6 @@ const editarCatalogo = async (req, res) => {
         if (!catalogo) {
             return res.status(404).send({ status: "error", message: 'Catalogo no encontrado' });
         }
-
         // verificar la existencia de un catalogo antes de crear uno
         const { duplicado, message } = await verificarAtributosUnicosCatalogo(codigo_interno, codigo_de_barras, codigo_proveedor);
         if (duplicado && duplicado.id !== catalogo.id) {
@@ -100,8 +96,6 @@ const editarCatalogo = async (req, res) => {
     }
 };
 
-
-
 const borrarCatalogo = async (req, res) => {
     let { id } = req.params;
     try {
@@ -126,7 +120,6 @@ const borrarCatalogo = async (req, res) => {
     }
 };
 
-
 const verificarAtributosUnicosCatalogo = async (codigo_interno, codigo_de_barras, codigo_proveedor) => {
     const duplicado = await Catalogo.findOne({
         where: {
@@ -143,7 +136,6 @@ const verificarAtributosUnicosCatalogo = async (codigo_interno, codigo_de_barras
 
     return { duplicado };
 };
-
 
 module.exports = {
     crearCatalogo,
