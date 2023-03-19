@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const subcategoriaController = require("../../controllers/catalogo/subcategoria");
+const { controladorSubcategoria } = require("../../controllers/catalogo");
 
 // Rutas de subcategorias
-router.post("/crear", subcategoriaController.crearSubcategoria);
-router.get("/mostrar", subcategoriaController.mostrarSubcategorias);
+router.post("/crear", controladorSubcategoria.crearSubcategoria);
+router.get("/mostrar", controladorSubcategoria.mostrarSubcategorias);
 router.route("/id/:id")
-    .get(subcategoriaController.obtenerSubcategoriaPorId)
-    .put(subcategoriaController.actualizarSubcategoria)
-    .delete(subcategoriaController.borrarSubcategoria);
+    .get(controladorSubcategoria.obtenerSubcategoriaPorId)
+    .put(controladorSubcategoria.editarSubcategoria)
+    .delete(controladorSubcategoria.borrarSubcategoria);
 
 module.exports = router;

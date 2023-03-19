@@ -1,11 +1,24 @@
 const { Op } = require('sequelize');
 const { Catalogo } = require('../../db/models/catalogo');
-
+const validator = require('validator');
 
 
 const crearCatalogo = async (req, res) => {
     try {
         const { nombre, codigo_interno, codigo_de_barras, codigo_proveedor, descripcion, activo, id_unidad_medida, id_tipo_catalogo, id_subcategoria } = req.body;
+
+
+        const nombreLimpio = validator.trim(nombre);
+
+
+        // Validatar el largo del nombre
+        if (!validator.isLength(nombreLimpio, { min: 1, max: 100 })) {
+            return res.status(400).json({
+                status: 'error',
+                message: 'El nombre debe tener entre 1 y 100 caracteres',
+            });
+        }
+
 
         // verificar la existencia de un catalogo antes de crear uno
         const { duplicado, message } = await verificarAtributosUnicosCatalogo(codigo_interno, codigo_de_barras, codigo_proveedor);
@@ -14,7 +27,7 @@ const crearCatalogo = async (req, res) => {
         }
 
         const nuevoCatalogo = await Catalogo.create({
-            nombre,
+            nombre: nombreLimpio,
             codigo_interno,
             codigo_de_barras,
             codigo_proveedor,
@@ -67,6 +80,16 @@ const editarCatalogo = async (req, res) => {
         const { id } = req.params;
         const { nombre, codigo_interno, codigo_de_barras, codigo_proveedor, descripcion, activo, id_unidad_medida, id_tipo_catalogo, id_subcategoria } = req.body;
 
+        const nombreLimpio = validator.trim(nombre);
+
+        // Validatar el largo del nombre
+        if (!validator.isLength(nombreLimpio, { min: 1, max: 100 })) {
+            return res.status(400).json({
+                status: 'error',
+                message: 'El nombre debe tener entre 1 y 100 caracteres',
+            });
+        }
+
         const catalogo = await Catalogo.findByPk(id);
         if (!catalogo) {
             return res.status(404).send({ status: "error", message: 'Catalogo no encontrado' });
@@ -78,7 +101,7 @@ const editarCatalogo = async (req, res) => {
         }
 
         const catalogoActualizado = await catalogo.update({
-            nombre,
+            nombre: nombreLimpio,
             codigo_interno,
             codigo_de_barras,
             codigo_proveedor,

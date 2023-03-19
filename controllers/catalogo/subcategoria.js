@@ -5,8 +5,12 @@ const validator = require('validator');
 const crearSubcategoria = async (req, res) => {
     try {
         const { nombre, id_categoria } = req.body;
-        // validate nombre field
-        if (!validator.isLength(nombre, { min: 1, max: 255 })) {
+        // Hacer un trim al nombre
+        const nombreLimpio = validator.trim(nombre);
+
+
+        // Validatar el largo del nombre
+        if (!validator.isLength(nombreLimpio, { min: 1, max: 255 })) {
             return res.status(400).json({
                 status: 'error',
                 message: 'El nombre debe tener entre 1 y 255 caracteres',
@@ -24,7 +28,7 @@ const crearSubcategoria = async (req, res) => {
 
 
         const subcategoria = await Subcategoria.create({
-            nombre,
+            nombre: nombreLimpio,
             id_categoria,
         });
 
@@ -88,13 +92,17 @@ const obtenerSubcategoriaPorId = async (req, res) => {
 };
 
 // Actualiza una subcategoría existente
-const actualizarSubcategoria = async (req, res) => {
+const editarSubcategoria = async (req, res) => {
     try {
         const { id } = req.params;
         const { nombre, id_categoria } = req.body;
 
 
-        if (!validator.isLength(nombre, { min: 1, max: 255 })) {
+        // Hacer un trim al nombre
+        const nombreLimpio = validator.trim(nombre);
+
+        // Validatar el largo del nombre
+        if (!validator.isLength(nombreLimpio, { min: 1, max: 255 })) {
             return res.status(400).json({
                 status: 'error',
                 message: 'El nombre debe tener entre 1 y 255 caracteres',
@@ -109,7 +117,6 @@ const actualizarSubcategoria = async (req, res) => {
             });
         }
 
-
         const subcategoria = await Subcategoria.findByPk(id);
 
         if (!subcategoria) {
@@ -120,7 +127,7 @@ const actualizarSubcategoria = async (req, res) => {
         }
 
         const subcategoriaActualizada = await subcategoria.update({
-            nombre,
+            nombre: nombreLimpio,
             id_categoria,
         });
 
@@ -170,6 +177,6 @@ module.exports = {
     crearSubcategoria,
     obtenerSubcategoriaPorId,
     mostrarSubcategorias,
-    actualizarSubcategoria,
+    editarSubcategoria,
     borrarSubcategoria
 }
