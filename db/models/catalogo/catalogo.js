@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../../connection');
 const Subcategoria = require('./subcategoria');
-
+const TipoCatalogo = require('./tipo_catalogo');
 
 const Catalogo = sequelize.define('catalogo', {
     id: {
@@ -65,5 +65,10 @@ const Catalogo = sequelize.define('catalogo', {
 });
 
 Subcategoria.hasMany(Catalogo, { foreignKey: 'id_subcategoria', as: 'catalogo' });
+TipoCatalogo.hasMany(Catalogo, { foreignKey: 'id_tipo_catalogo', as: 'catalogo' });
+
+
+
 Catalogo.belongsTo(Subcategoria, { foreignKey: 'id_subcategoria', as: 'subcategoria' });
+Catalogo.belongsTo(TipoCatalogo, { foreignKey: 'id_tipo_catalogo', as: 'tipo_catalogo' });
 module.exports = Catalogo;

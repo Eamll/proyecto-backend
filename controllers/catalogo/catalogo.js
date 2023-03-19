@@ -40,7 +40,7 @@ const crearCatalogo = async (req, res) => {
         res.status(201).send({
             status: "success",
             message: "Nuevo catalogo creado satisfactoriamente",
-            nuevoCatalogo
+            catalogo: nuevoCatalogo
         });
     } catch (error) {
         console.error(error);
@@ -112,7 +112,7 @@ const editarCatalogo = async (req, res) => {
             id_subcategoria
         });
 
-        return res.status(200).send({ status: "success", catalogoActualizado });
+        return res.status(200).send({ status: "success", catalogo: catalogoActualizado });
     } catch (error) {
         console.error(error);
         return res.status(500).send({ status: "error", message: 'Error interno del servidor' });

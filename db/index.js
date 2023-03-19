@@ -3,6 +3,7 @@ const { connectDb } = require('./connection');
 const cors = require("cors");
 
 
+
 //Crear servidor node
 const app = express();
 const port = process.env.PORT || 3000;
@@ -16,17 +17,19 @@ connectDb();
 app.use(express.json());
 
 //Rutas
-const rutasCatalogo = require("../routes/catalogo/catalogo");
-const rutasSubcategoria = require("../routes/catalogo/subcategoria");
-const rutasCategoria = require("../routes/catalogo/categoria");
+
+const { rutasCatalogo, rutasCategoria,
+    rutasSubcategoria, rutasTipoCatalogo } = require('../routes/catalogo');
 
 
-
+// const { TipoCatalogo } = require('./models/catalogo');
+// console.log(TipoCatalogo.prototype);
 
 //Cargo las rutas
 app.use("/api/catalogo", rutasCatalogo);
 app.use("/api/subcategoria", rutasSubcategoria);
 app.use("/api/categoria", rutasCategoria);
+app.use("/api/tipo_catalogo", rutasTipoCatalogo);
 
 
 app.listen(port, () => {

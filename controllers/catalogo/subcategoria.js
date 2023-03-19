@@ -134,7 +134,7 @@ const editarSubcategoria = async (req, res) => {
         res.status(200).send({
             status: 'success',
             message: 'Subcategoría actualizada satisfactoriamente',
-            subcategoriaActualizada,
+            subcategoria: subcategoriaActualizada,
         });
     } catch (error) {
         console.error(error);
