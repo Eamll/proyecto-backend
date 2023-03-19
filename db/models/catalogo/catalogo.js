@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../../connection');
+const Subcategoria = require('./subcategoria');
 
 
 const Catalogo = sequelize.define('catalogo', {
@@ -63,4 +64,6 @@ const Catalogo = sequelize.define('catalogo', {
     tableName: 'catalogo' // setea el nombre de la tabla manualmente para que no sea plural
 });
 
+Subcategoria.hasMany(Catalogo, { foreignKey: 'id_subcategoria', as: 'catalogo' });
+Catalogo.belongsTo(Subcategoria, { foreignKey: 'id_subcategoria', as: 'subcategoria' });
 module.exports = Catalogo;

@@ -101,7 +101,7 @@ const editarSubcategoria = async (req, res) => {
         // Hacer un trim al nombre
         const nombreLimpio = validator.trim(nombre);
 
-        // Validatar el largo del nombre
+        // Validar el largo del nombre
         if (!validator.isLength(nombreLimpio, { min: 1, max: 255 })) {
             return res.status(400).json({
                 status: 'error',
@@ -158,8 +158,18 @@ const borrarSubcategoria = async (req, res) => {
             });
         }
 
-        await subcategoria.destroy();
-
+        try {
+            await subcategoria.destroy();
+        } catch (error) {
+            if (error.message === 'No se puede eliminar una subcategoria que tiene catalogos asociados') {
+                return res.status(400).json({
+                    status: 'error',
+                    message: error.message,
+                });
+            } else {
+                throw error;
+            }
+        }
         res.status(200).send({
             status: 'success',
             message: 'Subcategoría eliminada satisfactoriamente',

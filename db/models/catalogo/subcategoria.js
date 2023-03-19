@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../../connection');
-sequelize
+const Categoria = require('./categoria');
+
 
 const Subcategoria = sequelize.define('subcategoria', {
     id: {
@@ -24,7 +25,17 @@ const Subcategoria = sequelize.define('subcategoria', {
 }, {
     timestamps: false, // columnas createdAt and updatedAt
     underscored: true, // para usar snake_case en los nombres de los modelos
-    tableName: 'subcategoria' // setea el nombre de la tabla manualmente para que no sea plural
+    tableName: 'subcategoria', // setea el nombre de la tabla manualmente para que no sea plural
+    hooks: {
+        async beforeDestroy(subcategoria, options) {
+            const count = await subcategoria.countCatalogo();
+            if (count > 0) {
+                throw new Error('No se puede eliminar una subcategoria que tiene catalogos asociados');
+            }
+        }
+    }
 },);
 
+Categoria.hasMany(Subcategoria, { foreignKey: 'id_categoria', as: 'subcategoria' });
+Subcategoria.belongsTo(Categoria, { foreignKey: 'id_categoria', as: 'categoria' });
 module.exports = Subcategoria;
