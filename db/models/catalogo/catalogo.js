@@ -1,11 +1,12 @@
-const { sequelize } = require("../../db/connection")
 const { DataTypes } = require('sequelize');
+const { sequelize } = require('../../connection');
 
 const Catalogo = sequelize.define('catalogo', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        autoIncrement: true
+        autoIncrement: true,
+        allowNull: false
     },
     nombre: {
         type: DataTypes.STRING(100),
@@ -56,9 +57,9 @@ const Catalogo = sequelize.define('catalogo', {
         }
     },
 }, {
-    timestamps: false, // adds createdAt and updatedAt columns
-    underscored: true, // uses snake_case instead of camelCase for column names
-    tableName: 'catalogo' // sets the table name explicitly (optional)
+    timestamps: false, // columnas createdAt and updatedAt
+    underscored: true, // para usar snake_case en los nombres de los modelos
+    tableName: 'catalogo' // setea el nombre de la tabla manualmente para que no sea plural
 });
 
 module.exports = Catalogo;

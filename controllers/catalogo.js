@@ -1,5 +1,6 @@
-const Catalogo = require("../model/catalogo/catalogo");
+
 const { Op } = require('sequelize');
+const { Catalogo } = require('../db/models/catalogo');
 
 
 const crearCatalogo = async (req, res) => {

@@ -1,5 +1,5 @@
 const express = require('express');
-const { connectDb } = require('./db/connection');
+const { connectDb } = require('./connection');
 const cors = require("cors");
 
 //Crear servidor node
@@ -15,11 +15,16 @@ connectDb();
 app.use(express.json());
 
 //Rutas
-const rutas = require("./routes/catalogo");
+const rutas = require("../routes/catalogo");
 
 //Cargo las rutas
 app.use("/api/catalogo", rutas);
 
+// Import all the Sequelize models
+
+
 app.listen(port, () => {
     console.log(`Express server listening on port ${port}`);
 });
+
+module.exports = app;
