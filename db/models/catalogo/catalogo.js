@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../../connection');
 const Subcategoria = require('./subcategoria');
 const TipoCatalogo = require('./tipo_catalogo');
-
+const UnidadMedida = require('../unidad_medida');
 const Catalogo = sequelize.define('catalogo', {
     id: {
         type: DataTypes.INTEGER,
@@ -40,6 +40,10 @@ const Catalogo = sequelize.define('catalogo', {
         references: {
             model: 'unidad_medida',
             key: 'id'
+        },
+        validate: {
+            isInt: true,
+            notNull: true
         }
     },
     id_tipo_catalogo: {
@@ -48,6 +52,10 @@ const Catalogo = sequelize.define('catalogo', {
         references: {
             model: 'tipo_catalogo',
             key: 'id'
+        },
+        validate: {
+            isInt: true,
+            notNull: true
         }
     },
     id_subcategoria: {
@@ -56,6 +64,10 @@ const Catalogo = sequelize.define('catalogo', {
         references: {
             model: 'subcategoria',
             key: 'id'
+        },
+        validate: {
+            isInt: true,
+            notNull: true
         }
     },
 }, {
@@ -66,9 +78,11 @@ const Catalogo = sequelize.define('catalogo', {
 
 Subcategoria.hasMany(Catalogo, { foreignKey: 'id_subcategoria', as: 'catalogo' });
 TipoCatalogo.hasMany(Catalogo, { foreignKey: 'id_tipo_catalogo', as: 'catalogo' });
+UnidadMedida.hasMany(Catalogo, { foreignKey: 'id_unidad_medida', as: 'catalogo' });
 
 
 
 Catalogo.belongsTo(Subcategoria, { foreignKey: 'id_subcategoria', as: 'subcategoria' });
 Catalogo.belongsTo(TipoCatalogo, { foreignKey: 'id_tipo_catalogo', as: 'tipo_catalogo' });
+Catalogo.belongsTo(UnidadMedida, { foreignKey: 'id_unidad_medida', as: 'unidad_medida' });
 module.exports = Catalogo;

@@ -1,4 +1,3 @@
-const { Op } = require('sequelize');
 const { Categoria } = require('../../db/models/catalogo');
 const validator = require('validator');
 

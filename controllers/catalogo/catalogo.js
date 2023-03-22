@@ -1,33 +1,33 @@
-const { Op } = require('sequelize');
+const { validationResult } = require('express-validator');
+const { Op, Sequelize } = require('sequelize');
 const { Catalogo } = require('../../db/models/catalogo');
-const validator = require('validator');
 
 
-const crearCatalogo = async (req, res) => {
+// const express = require('express');
+
+const crearCatalogo = async (req, res, next) => {
     try {
-        const { nombre, codigo_interno, codigo_de_barras, codigo_proveedor, descripcion, activo, id_unidad_medida, id_tipo_catalogo, id_subcategoria } = req.body;
 
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            const errorMessages = errors.array().map(err => err.msg);
+            return res.status(400).json({ status: 'error', message: errorMessages.join(', ') });
 
-        const nombreLimpio = validator.trim(nombre);
-
-
-        // Validatar el largo del nombre
-        if (!validator.isLength(nombreLimpio, { min: 1, max: 100 })) {
-            return res.status(400).json({
-                status: 'error',
-                message: 'El nombre debe tener entre 1 y 100 caracteres',
-            });
         }
+
+        const sanitizedData = req.body;
+
+        const { nombre, codigo_interno, codigo_de_barras, codigo_proveedor, descripcion, activo, id_unidad_medida, id_tipo_catalogo, id_subcategoria } = sanitizedData;
 
 
         // verificar la existencia de un catalogo antes de crear uno
-        const { duplicado, message } = await verificarAtributosUnicosCatalogo(codigo_interno, codigo_de_barras, codigo_proveedor);
-        if (duplicado) {
-            return res.status(400).send({ status: "error", message });
-        }
+        // const { duplicado, message } = await verificarAtributosUnicosCatalogo(codigo_interno, codigo_de_barras, codigo_proveedor);
+        // if (duplicado) {
+        //     return res.status(400).send({ status: "error", message });
+        // }
 
         const nuevoCatalogo = await Catalogo.create({
-            nombre: nombreLimpio,
+            nombre,
             codigo_interno,
             codigo_de_barras,
             codigo_proveedor,
@@ -42,16 +42,13 @@ const crearCatalogo = async (req, res) => {
             message: "Nuevo catalogo creado satisfactoriamente",
             catalogo: nuevoCatalogo
         });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send({
-            status: "error",
-            message: "Error al crear nuevo catalogo",
-        });
+    }
+    catch (error) {
+        next(error)
     }
 };
 
-const obtCatalogoPorId = async (req, res) => {
+const obtCatalogoPorId = async (req, res, next) => {
     try {
         const { id } = req.params;
         const catalogo = await Catalogo.findByPk(id);
@@ -60,35 +57,24 @@ const obtCatalogoPorId = async (req, res) => {
         }
         res.status(200).json({ status: "success", catalogo });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ status: "error", message: 'Error interno del servidor' });
+        next(error)
     }
 };
 
-const mostrarCatalogos = async (req, res) => {
+const mostrarCatalogos = async (req, res, next) => {
     try {
         const products = await Catalogo.findAll();
         return res.status(200).json({ status: "success", products });
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ status: "error", message: "Error interno del servidor" });
+        next(error)
     }
 };
 
-const editarCatalogo = async (req, res) => {
+const editarCatalogo = async (req, res, next) => {
     try {
         const { id } = req.params;
         const { nombre, codigo_interno, codigo_de_barras, codigo_proveedor, descripcion, activo, id_unidad_medida, id_tipo_catalogo, id_subcategoria } = req.body;
 
-        const nombreLimpio = validator.trim(nombre);
-
-        // Validatar el largo del nombre
-        if (!validator.isLength(nombreLimpio, { min: 1, max: 100 })) {
-            return res.status(400).json({
-                status: 'error',
-                message: 'El nombre debe tener entre 1 y 100 caracteres',
-            });
-        }
 
         const catalogo = await Catalogo.findByPk(id);
         if (!catalogo) {
@@ -114,12 +100,11 @@ const editarCatalogo = async (req, res) => {
 
         return res.status(200).send({ status: "success", catalogo: catalogoActualizado });
     } catch (error) {
-        console.error(error);
-        return res.status(500).send({ status: "error", message: 'Error interno del servidor' });
+        next(error)
     }
 };
 
-const borrarCatalogo = async (req, res) => {
+const borrarCatalogo = async (req, res, next) => {
     let { id } = req.params;
     try {
         const catalogo = await Catalogo.findByPk(id);
@@ -135,30 +120,26 @@ const borrarCatalogo = async (req, res) => {
             message: "Catalogo eliminado"
         });
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({
-            status: "error",
-            message: "Error inesperado, intente más tarde."
-        });
+        next(error);
     }
 };
 
-const verificarAtributosUnicosCatalogo = async (codigo_interno, codigo_de_barras, codigo_proveedor) => {
-    const duplicado = await Catalogo.findOne({
-        where: {
-            [Op.or]: [{ codigo_interno }, { codigo_de_barras }, { codigo_proveedor }]
-        }
-    });
+// const verificarAtributosUnicosCatalogo = async (codigo_interno, codigo_de_barras, codigo_proveedor) => {
+//     const duplicado = await Catalogo.findOne({
+//         where: {
+//             [Op.or]: [{ codigo_interno }, { codigo_de_barras }, { codigo_proveedor }]
+//         }
+//     });
 
-    if (duplicado) {
-        const atributoRepetido = duplicado.codigo_interno === codigo_interno ? 'codigo_interno' :
-            duplicado.codigo_de_barras === codigo_de_barras ? 'codigo_de_barras' :
-                'codigo_proveedor';
-        return { duplicado, message: `El atributo ${atributoRepetido} ya está en uso` };
-    }
+//     if (duplicado) {
+//         const atributoRepetido = duplicado.codigo_interno === codigo_interno ? 'codigo_interno' :
+//             duplicado.codigo_de_barras === codigo_de_barras ? 'codigo_de_barras' :
+//                 'codigo_proveedor';
+//         return { duplicado, message: `El atributo ${atributoRepetido} ya está en uso` };
+//     }
 
-    return { duplicado };
-};
+//     return { duplicado };
+// };
 
 module.exports = {
     crearCatalogo,

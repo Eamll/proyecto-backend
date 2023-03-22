@@ -5,12 +5,12 @@ const sequelize = new Sequelize('postgres://pixaapqw:ekGeXfZFPelGm2TblNxKFjcVKmq
 const connectDb = async () => {
     try {
         await sequelize.authenticate();
-        console.log('Connection has been established successfully.');
+        console.log('La conexión se ha establecido satisfactoraimente.');
         const result = await sequelize.query('SELECT NOW() AS "theTime"');
         console.log(result[0][0].theTime);
 
     } catch (err) {
-        console.error('Unable to connect to the database:', err);
+        console.error('No se ha podido conectar a la base de datos:', err);
     }
 }
 

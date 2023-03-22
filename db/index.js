@@ -1,6 +1,11 @@
 const express = require('express');
 const { connectDb } = require('./connection');
 const cors = require("cors");
+const { rutasCatalogo, rutasCategoria,
+    rutasSubcategoria, rutasTipoCatalogo } = require('../routes/catalogo');
+const rutasUnidadMedida = require('../routes/unidad_medida');
+const manejarError = require('../middlewares/errorHandler');
+
 
 
 
@@ -16,21 +21,23 @@ connectDb();
 
 app.use(express.json());
 
-//Rutas
-
-const { rutasCatalogo, rutasCategoria,
-    rutasSubcategoria, rutasTipoCatalogo } = require('../routes/catalogo');
-
-
-// const { TipoCatalogo } = require('./models/catalogo');
-// console.log(TipoCatalogo.prototype);
+// const UnidadMedida = require('./models/unidad_medida');
+// console.log(UnidadMedida.prototype);
 
 //Cargo las rutas
+//Catalogo
 app.use("/api/catalogo", rutasCatalogo);
 app.use("/api/subcategoria", rutasSubcategoria);
 app.use("/api/categoria", rutasCategoria);
 app.use("/api/tipo_catalogo", rutasTipoCatalogo);
 
+//Unidad de medida
+app.use("/api/unidad_medida", rutasUnidadMedida);
+
+
+
+//Utilizaremos nuestro middleware para controlar errores
+app.use(manejarError);
 
 app.listen(port, () => {
     console.log(`Express server listening on port ${port}`);

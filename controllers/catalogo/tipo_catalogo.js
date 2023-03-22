@@ -1,10 +1,20 @@
-
 const { TipoCatalogo } = require('../../db/models/catalogo');
 const validator = require('validator');
 
 const crearTipoCatalogo = async (req, res) => {
     try {
-        const { nombre } = req.body;
+        const { id, nombre } = req.body;
+
+        // Verificar si el tipo_catalogo ya existe en la base de datos
+        const tipoCatalogoExistente = await TipoCatalogo.findOne({ where: { id } });
+        if (tipoCatalogoExistente) {
+            return res.status(400).json({
+                status: 'error',
+                message: 'Ya existe un tipo de catalogo con el ID especificado',
+            });
+        }
+
+
         // Hacer un trim al nombre
         const nombreLimpio = validator.trim(nombre);
 
@@ -16,7 +26,7 @@ const crearTipoCatalogo = async (req, res) => {
             });
         }
 
-        const tipo_catalogo = await TipoCatalogo.create({ nombre: nombreLimpio });
+        const tipo_catalogo = await TipoCatalogo.create({ id, nombre: nombreLimpio });
 
         res.status(201).json({
             status: 'success',
@@ -77,7 +87,7 @@ const mostrarTiposCatalogo = async (req, res) => {
 
 const editarTipoCatalogo = async (req, res) => {
     try {
-        const { nombre } = req.body;
+        const { id, nombre } = req.body;
         // Hacer un trim al nombre
         const nombreLimpio = validator.trim(nombre);
 
@@ -96,7 +106,7 @@ const editarTipoCatalogo = async (req, res) => {
                 message: 'El tipo de catalogo especificado no existe en la base de datos',
             });
         }
-
+        tipo_catalogo.id = id;
         tipo_catalogo.nombre = nombreLimpio;
         await tipo_catalogo.save();
 
@@ -118,7 +128,7 @@ const borrarTipoCatalogo = async (req, res) => {
     try {
         const { id } = req.params;
 
-        // Verificar si la categoria existe en la bd
+        // Verificar si el tipo de catalogo existe en la bd
         const tipo_catalogo = await TipoCatalogo.findOne({ where: { id } });
         if (!tipo_catalogo) {
             return res.status(404).json({
@@ -127,7 +137,7 @@ const borrarTipoCatalogo = async (req, res) => {
             });
         }
 
-        // Eliminar la categoria
+        // Eliminar el tipo de catalogo
         try {
             await tipo_catalogo.destroy();
         } catch (error) {
