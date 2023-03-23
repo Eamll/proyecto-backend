@@ -1,58 +1,40 @@
 const { Categoria } = require('../../db/models/catalogo');
-const validator = require('validator');
+const { validationResult } = require('express-validator');
 
 
-const crearCategoria = async (req, res) => {
+const crearCategoria = async (req, res, next) => {
     try {
-        const { nombre } = req.body;
-        // Hacer un trim al nombre
-        const nombreLimpio = validator.trim(nombre);
-
-        // Validar el largo del nombre
-        if (!validator.isLength(nombreLimpio, { min: 1, max: 255 })) {
-            return res.status(400).json({
-                status: 'error',
-                message: 'El nombre debe tener entre 1 y 255 caracteres',
-            });
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            const errorMessages = errors.array().map(err => err.msg);
+            return res.status(400).json({ status: 'error', message: errorMessages.join(', ') });
         }
+        const sanitizedData = req.body;
 
-        const categoria = await Categoria.create({ nombre: nombreLimpio });
+        const { nombre } = sanitizedData;
+
+        const nuevaCategoria = await Categoria.create({ nombre });
 
         res.status(201).json({
             status: 'success',
             message: 'Categoria creada satisfactoriamente',
-            categoria,
+            categoria: nuevaCategoria,
         });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            status: 'error',
-            message: 'Error al crear nueva categoria',
-        });
+        next(error);
     }
 };
 
-const obtenerCategoriaPorId = async (req, res) => {
+const obtenerCategoriaPorId = async (req, res, next) => {
     try {
-        const categoria = await Categoria.findByPk(req.params.id);
+        const { id } = req.params;
+        const categoria = await Categoria.findByPk(id);
         if (!categoria) {
-            return res.status(404).json({
-                status: 'error',
-                message: 'La categoria especificada no existe en la base de datos',
-            });
+            return res.status(404).json({ status: "error", message: 'No se ha encontrado la categoria' });
         }
-
-        res.status(200).json({
-            status: 'success',
-            message: 'Categoria obtenida satisfactoriamente',
-            categoria,
-        });
+        res.status(200).json({ status: "success", message: "Categoria obtenida satisfactoriamente", categoria });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            status: 'error',
-            message: 'Error al obtener categoria',
-        });
+        next(error)
     }
 };
 
@@ -75,19 +57,16 @@ const mostrarCategorias = async (req, res) => {
 };
 
 
-const editarCategoria = async (req, res) => {
+const editarCategoria = async (req, res, next) => {
     try {
-        const { nombre } = req.body;
-        // Hacer un trim al nombre
-        const nombreLimpio = validator.trim(nombre);
-
-        // Validar el largo del nombre
-        if (!validator.isLength(nombreLimpio, { min: 1, max: 255 })) {
-            return res.status(400).json({
-                status: 'error',
-                message: 'El nombre debe tener entre 1 y 255 caracteres',
-            });
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            const errorMessages = errors.array().map(err => err.msg);
+            return res.status(400).json({ status: 'error', message: errorMessages.join(', ') });
         }
+        const sanitizedData = req.body;
+
+        const { nombre } = sanitizedData;
 
         const categoria = await Categoria.findByPk(req.params.id);
         if (!categoria) {
@@ -97,20 +76,15 @@ const editarCategoria = async (req, res) => {
             });
         }
 
-        categoria.nombre = nombreLimpio;
-        await categoria.save();
+        const categoriaActualizada = await subcategoria.update({ nombre });
 
         res.status(200).json({
             status: 'success',
             message: 'Categoria actualizada satisfactoriamente',
-            categoria,
+            categoria: categoriaActualizada,
         });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            status: 'error',
-            message: 'Error al actualizar categoria',
-        });
+        next(error);
     }
 };
 
