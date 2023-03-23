@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { controladorCatalogo } = require('../../controllers/catalogo');
-const { reglasValidacionCatalogo } = require("../../middlewares/validators/validadorCatalogo");
+const { reglasValidacionCatalogo } = require("../../middlewares/validators/catalogo/validadorCatalogo");
 
 //Rutas de catalogos
 router.post("/crear", reglasValidacionCatalogo, controladorCatalogo.crearCatalogo);

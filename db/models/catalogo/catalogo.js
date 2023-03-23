@@ -25,7 +25,6 @@ const Catalogo = sequelize.define('catalogo', {
     },
     codigo_proveedor: {
         type: DataTypes.STRING(20),
-        unique: true
     },
     descripcion: {
         type: DataTypes.STRING(255)

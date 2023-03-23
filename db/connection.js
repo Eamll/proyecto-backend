@@ -1,6 +1,7 @@
 const { Sequelize } = require('sequelize');
 
-const sequelize = new Sequelize('postgres://pixaapqw:ekGeXfZFPelGm2TblNxKFjcVKmqk4Uz4@babar.db.elephantsql.com/pixaapqw');
+// const sequelize = new Sequelize('postgres://pixaapqw:ekGeXfZFPelGm2TblNxKFjcVKmqk4Uz4@babar.db.elephantsql.com/pixaapqw');
+const sequelize = new Sequelize('postgres://administrador:administrador@3.236.166.239:5432/proyecto');
 
 const connectDb = async () => {
     try {

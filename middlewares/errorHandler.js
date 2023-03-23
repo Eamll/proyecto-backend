@@ -5,13 +5,12 @@ const manejarError = (error, req, res, next) => {
             let friendlyMessage;
             console.log(err);
             if (err.validatorKey === 'isInt') {
-                friendlyMessage = `Please enter a valid integer for '${err.path}'.`;
+                friendlyMessage = `Por favor inserte un valor entero para:'${err.path}'.`;
             } else if (err.validatorKey === 'is_null') {
-                friendlyMessage = `The '${err.path}' field is required.`;
+                friendlyMessage = `El atributo '${err.path}' es requerido.`;
             } else {
-                friendlyMessage = `An error occurred with the '${err.path}' field.`;
+                friendlyMessage = `Ha ocurrido un error con el campo '${err.path}'.`;
             }
-
             console.error('Error:', friendlyMessage);
             err.message = friendlyMessage;
         });
@@ -20,13 +19,11 @@ const manejarError = (error, req, res, next) => {
         error.message = error.errors.map(err => err.message).join(' ');
     } else if (error.name === 'SequelizeForeignKeyConstraintError') {
         console.error('SequelizeForeignKeyConstraintError error:', error.message);
-        // // Limpiar el nombre de la llave foranea
+        //Limpiar el nombre de la llave foranea
         const prefijo = `${error.table}_`;
         const sufijo = '_fkey';
         const nombreLlaveForanea = error.index.replace(prefijo, '').replace(sufijo, '');
-        // const message = `El valor del atributo '${nombreLlaveForanea}' no existe`;
-        // error.message = message;
-        // console.log(error.parent.sql + "******");
+
         if (error.parent) {
             const parentSql = error.parent.sql;
             if (parentSql.includes('DELETE')) {
