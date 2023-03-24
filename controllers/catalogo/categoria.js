@@ -38,7 +38,7 @@ const obtenerCategoriaPorId = async (req, res, next) => {
     }
 };
 
-const mostrarCategorias = async (req, res) => {
+const mostrarCategorias = async (req, res, next) => {
     try {
         const categorias = await Categoria.findAll();
 
@@ -48,11 +48,7 @@ const mostrarCategorias = async (req, res) => {
             categorias,
         });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            status: 'error',
-            message: 'Error al obtener categorias',
-        });
+        next(error);
     }
 };
 
@@ -76,7 +72,7 @@ const editarCategoria = async (req, res, next) => {
             });
         }
 
-        const categoriaActualizada = await subcategoria.update({ nombre });
+        const categoriaActualizada = await categoria.update({ nombre });
 
         res.status(200).json({
             status: 'success',
@@ -88,43 +84,27 @@ const editarCategoria = async (req, res, next) => {
     }
 };
 
-const borrarCategoria = async (req, res) => {
+const borrarCategoria = async (req, res, next) => {
     try {
         const { id } = req.params;
 
-        // Verificar si la categoria existe en la bd
-        const categoria = await Categoria.findOne({ where: { id } });
+        // Eliminar la categoria
+        const categoria = await Categoria.findByPk(id);
         if (!categoria) {
-            return res.status(404).json({
-                status: 'error',
-                message: 'La categoria especificada no existe en la base de datos',
+            return res.status(400).json({
+                status: "error",
+                message: "Categoria no encontrada"
             });
         }
+        await categoria.destroy();
 
-        // Eliminar la categoria
-        try {
-            await categoria.destroy();
-        } catch (error) {
-            if (error.message === 'No se puede eliminar una categoria que tiene subcategorias asociadas') {
-                return res.status(400).json({
-                    status: 'error',
-                    message: error.message,
-                });
-            } else {
-                throw error;
-            }
-        }
 
         res.status(200).json({
             status: 'success',
             message: 'Categoria eliminada satisfactoriamente',
         });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            status: 'error',
-            message: 'Error al eliminar la categoria',
-        });
+        next(error);
     }
 };
 

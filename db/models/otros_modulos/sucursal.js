@@ -1,23 +1,25 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../../connection');
 
-const Categoria = sequelize.define('categoria', {
+const Sucursal = sequelize.define('sucursal', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        allowNull: false,
+        allowNull: false
+    },
+    direccion: {
+        type: DataTypes.STRING(255),
+        allowNull: false
     },
     nombre: {
         type: DataTypes.STRING(255),
-        allowNull: false,
-    },
+        allowNull: false
+    }
 }, {
     timestamps: false,
     underscored: true,
-    tableName: 'categoria'
+    tableName: 'sucursal'
 });
 
-
-
-module.exports = Categoria;
+module.exports = Sucursal;

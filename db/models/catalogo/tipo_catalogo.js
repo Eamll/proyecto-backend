@@ -15,15 +15,7 @@ const TipoCatalogo = sequelize.define('tipo_catalogo', {
 }, {
     timestamps: false,
     underscored: true,
-    tableName: 'tipo_catalogo',
-    hooks: {
-        async beforeDestroy(tipo_catalogo, options) {
-            const count = await tipo_catalogo.countCatalogo();
-            if (count > 0) {
-                throw new Error('No se puede eliminar un tipo de catalogo que tiene catalogos asociados');
-            }
-        }
-    }
+    tableName: 'tipo_catalogo'
 });
 
 module.exports = TipoCatalogo;

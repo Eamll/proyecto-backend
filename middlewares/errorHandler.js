@@ -41,8 +41,11 @@ const manejarError = (error, req, res, next) => {
         error.message = errorMessage;
     } else if (error.name === 'SequelizeUniqueConstraintError') {
         console.error('SequelizeUniqueConstraintError error:', error.message);
-        const { path, value } = error.errors[0];
-        const message = `El atributo '${path}' con valor '${value}' ya está en uso`;
+        // const { path, value } = error.errors[0];
+        // const message = `El atributo '${path}' con valor '${value}' ya está en uso`;
+        // error.message = message;
+        const messages = error.errors.map(err => `El atributo '${err.path}' con valor '${err.value}' ya está en uso`);
+        const message = messages.join(', ');
         error.message = message;
     }
 

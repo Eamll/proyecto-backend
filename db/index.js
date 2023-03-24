@@ -1,10 +1,15 @@
 const express = require('express');
 const { connectDb } = require('./connection');
 const cors = require("cors");
+const manejarError = require('../middlewares/errorHandler');
+
+
 const { rutasCatalogo, rutasCategoria,
     rutasSubcategoria, rutasTipoCatalogo } = require('../routes/catalogo');
+const { rutasInventario, rutasAlmacen } = require('../routes/almacen');
 const rutasUnidadMedida = require('../routes/unidad_medida');
-const manejarError = require('../middlewares/errorHandler');
+
+
 
 
 
@@ -30,6 +35,11 @@ app.use("/api/catalogo", rutasCatalogo);
 app.use("/api/subcategoria", rutasSubcategoria);
 app.use("/api/categoria", rutasCategoria);
 app.use("/api/tipo_catalogo", rutasTipoCatalogo);
+
+//Almacen
+app.use("/api/inventario", rutasInventario);
+app.use("/api/almacen", rutasAlmacen);
+
 
 //Unidad de medida
 app.use("/api/unidad_medida", rutasUnidadMedida);

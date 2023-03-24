@@ -49,8 +49,8 @@ const obtCatalogoPorId = async (req, res, next) => {
 
 const mostrarCatalogos = async (req, res, next) => {
     try {
-        const products = await Catalogo.findAll();
-        return res.status(200).json({ status: "success", message: "Catalogos obtenidos satisfactoriamente", products });
+        const catalogos = await Catalogo.findAll();
+        return res.status(200).json({ status: "success", message: "Catalogos obtenidos satisfactoriamente", catalogos });
     } catch (error) {
         next(error)
     }

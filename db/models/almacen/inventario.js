@@ -1,12 +1,14 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../../connection');
 const Almacen = require('./almacen');
-const Catalogo = require('./catalogo');
+const { Catalogo } = require('../catalogo/');
 
 const Inventario = sequelize.define('inventario', {
     id_almacen: {
         type: DataTypes.INTEGER,
         allowNull: false,
+
+        primaryKey: true,
         references: {
             model: 'almacen',
             key: 'id'
@@ -19,6 +21,8 @@ const Inventario = sequelize.define('inventario', {
     id_catalogo: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        unique: true,
+        primaryKey: true,
         references: {
             model: 'catalogo',
             key: 'id'
@@ -42,6 +46,7 @@ const Inventario = sequelize.define('inventario', {
     timestamps: false,
     underscored: true,
     tableName: 'inventario'
+
 });
 
 Almacen.hasMany(Inventario, { foreignKey: 'id_almacen', as: 'inventario' });

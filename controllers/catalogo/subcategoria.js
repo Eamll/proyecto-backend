@@ -2,33 +2,19 @@ const { Subcategoria, Categoria } = require("../../db/models/catalogo");
 const validator = require('validator');
 
 // Crea una nueva subcategoría
-const crearSubcategoria = async (req, res) => {
+const crearSubcategoria = async (req, res, next) => {
     try {
-        const { nombre, id_categoria } = req.body;
-        // Hacer un trim al nombre
-        const nombreLimpio = validator.trim(nombre);
-
-
-        // Validatar el largo del nombre
-        if (!validator.isLength(nombreLimpio, { min: 1, max: 255 })) {
-            return res.status(400).json({
-                status: 'error',
-                message: 'El nombre debe tener entre 1 y 255 caracteres',
-            });
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            const errorMessages = errors.array().map(err => err.msg);
+            return res.status(400).json({ status: 'error', message: errorMessages.join(', ') });
         }
+        const sanitizedData = req.body;
 
-        // Verificar si la categoria existe en la bd
-        const categoria = await Categoria.findOne({ where: { id: id_categoria } });
-        if (!categoria) {
-            return res.status(404).json({
-                status: 'error',
-                message: 'La categoria especificada no existe en la base de datos',
-            });
-        }
-
+        const { nombre, id_categoria } = sanitizedData;
 
         const subcategoria = await Subcategoria.create({
-            nombre: nombreLimpio,
+            nombre,
             id_categoria,
         });
 
@@ -38,17 +24,13 @@ const crearSubcategoria = async (req, res) => {
             subcategoria,
         });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            status: 'error',
-            message: 'Error al crear nueva subcategoria',
-        });
+        next(error)
     }
 };
 
 
 // Obtiene todas las subcategorías
-const mostrarSubcategorias = async (req, res) => {
+const mostrarSubcategorias = async (req, res, next) => {
     try {
         const subcategorias = await Subcategoria.findAll();
         res.status(200).send({
@@ -56,16 +38,12 @@ const mostrarSubcategorias = async (req, res) => {
             subcategorias,
         });
     } catch (error) {
-        console.error(error);
-        res.status(500).send({
-            status: 'error',
-            message: 'Error al obtener subcategorías',
-        });
+        next(error)
     }
 };
 
 // Obtiene una subcategoría por id
-const obtenerSubcategoriaPorId = async (req, res) => {
+const obtenerSubcategoriaPorId = async (req, res, next) => {
     try {
         const { id } = req.params;
 
@@ -83,39 +61,22 @@ const obtenerSubcategoriaPorId = async (req, res) => {
             subcategoria,
         });
     } catch (error) {
-        console.error(error);
-        res.status(500).send({
-            status: 'error',
-            message: 'Error al obtener subcategoría',
-        });
+        next(error)
     }
 };
 
 // Actualiza una subcategoría existente
-const editarSubcategoria = async (req, res) => {
+const editarSubcategoria = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const { nombre, id_categoria } = req.body;
-
-
-        // Hacer un trim al nombre
-        const nombreLimpio = validator.trim(nombre);
-
-        // Validar el largo del nombre
-        if (!validator.isLength(nombreLimpio, { min: 1, max: 255 })) {
-            return res.status(400).json({
-                status: 'error',
-                message: 'El nombre debe tener entre 1 y 255 caracteres',
-            });
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            const errorMessages = errors.array().map(err => err.msg);
+            return res.status(400).json({ status: 'error', message: errorMessages.join(', ') });
         }
-        // Verificar si la categoria existe en la bd
-        const categoria = await Categoria.findOne({ where: { id: id_categoria } });
-        if (!categoria) {
-            return res.status(404).json({
-                status: 'error',
-                message: 'La categoria especificada no existe en la base de datos',
-            });
-        }
+        const sanitizedData = req.body;
+
+        const { nombre, id_categoria } = sanitizedData;
 
         const subcategoria = await Subcategoria.findByPk(id);
 
@@ -127,7 +88,7 @@ const editarSubcategoria = async (req, res) => {
         }
 
         const subcategoriaActualizada = await subcategoria.update({
-            nombre: nombreLimpio,
+            nombre,
             id_categoria,
         });
 
@@ -137,11 +98,7 @@ const editarSubcategoria = async (req, res) => {
             subcategoria: subcategoriaActualizada,
         });
     } catch (error) {
-        console.error(error);
-        res.status(500).send({
-            status: 'error',
-            message: 'Error al actualizar subcategoría',
-        });
+        next(error)
     }
 };
 
