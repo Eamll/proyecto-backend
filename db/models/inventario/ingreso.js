@@ -1,9 +1,8 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../../connection');
-const Compra = require('./compra');
-const ConceptoIngreso = require('./concepto_ingreso');
-const Personal = require('./personal');
-const Almacen = require('./almacen');
+const { Compra, Personal } = require('../otros_modulos');
+const { Almacen } = require('../almacen');
+const { ConceptoIngreso } = require('../concepto');
 
 const Ingreso = sequelize.define('ingreso', {
     id: {

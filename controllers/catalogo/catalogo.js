@@ -1,5 +1,8 @@
 const { validationResult } = require('express-validator');
+
 const { Catalogo } = require('../../db/models/catalogo');
+
+// const Catalogo = auto.models.catalogo;
 
 const crearCatalogo = async (req, res, next) => {
     try {

@@ -8,6 +8,8 @@ const { rutasCatalogo, rutasCategoria,
     rutasSubcategoria, rutasTipoCatalogo } = require('../routes/catalogo');
 const { rutasInventario, rutasAlmacen } = require('../routes/almacen');
 const rutasUnidadMedida = require('../routes/unidad_medida');
+const { rutasIngreso } = require('../routes/inventario');
+
 
 
 
@@ -31,6 +33,7 @@ app.use(express.json());
 
 //Cargo las rutas
 //Catalogo
+
 app.use("/api/catalogo", rutasCatalogo);
 app.use("/api/subcategoria", rutasSubcategoria);
 app.use("/api/categoria", rutasCategoria);
@@ -44,7 +47,8 @@ app.use("/api/almacen", rutasAlmacen);
 //Unidad de medida
 app.use("/api/unidad_medida", rutasUnidadMedida);
 
-
+//Inventario
+app.use("/api/ingreso", rutasIngreso);
 
 //Utilizaremos nuestro middleware para controlar errores
 app.use(manejarError);
