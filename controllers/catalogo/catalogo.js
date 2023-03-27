@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator');
 
-const { Catalogo } = require('../../db/models/catalogo');
+const { Catalogo, TipoCatalogo, Subcategoria } = require('../../db/models/catalogo');
+const UnidadMedida = require('../../db/models/unidad_medida');
 
 // const Catalogo = auto.models.catalogo;
 
@@ -40,7 +41,25 @@ const crearCatalogo = async (req, res, next) => {
 const obtCatalogoPorId = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const catalogo = await Catalogo.findByPk(id);
+        const catalogo = await Catalogo.findByPk(id, {
+            include: [
+                {
+                    model: UnidadMedida,
+                    as: 'unidad_medida',
+                    attributes: ['id', 'nombre']
+                },
+                {
+                    model: TipoCatalogo,
+                    as: 'tipo_catalogo',
+                    attributes: ['id', 'nombre']
+                },
+                {
+                    model: Subcategoria,
+                    as: 'subcategoria',
+                    attributes: ['id', 'nombre']
+                }
+            ]
+        });
         if (!catalogo) {
             return res.status(404).json({ status: "error", message: 'No se ha encontrado el catalogo' });
         }

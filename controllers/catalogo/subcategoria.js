@@ -1,5 +1,6 @@
-const { Subcategoria, Categoria } = require("../../db/models/catalogo");
-const validator = require('validator');
+const { validationResult } = require("express-validator");
+const { Subcategoria } = require("../../db/models/catalogo");
+
 
 // Crea una nueva subcategoría
 const crearSubcategoria = async (req, res, next) => {

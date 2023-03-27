@@ -12,10 +12,10 @@ const reglasValidacionCatalogo = [
         .optional({ checkFalsy: true }) // Esta bien si esta vacio o no enviado
         .isLength({ min: 1, max: 20 })
         .withMessage('El codigo de barras debe tener entre 1 y 20 caracteres'),
-    body('codigo_proveedor')
-        .optional({ checkFalsy: true }) // Esta bien si esta vacio o no enviado
-        .isLength({ min: 1, max: 20 })
-        .withMessage('El codigo proveedor debe tener entre 1 y 20 caracteres'),
+    // body('codigo_proveedor')
+    //     .optional({ checkFalsy: true }) // Esta bien si esta vacio o no enviado
+    //     .isLength({ min: 1, max: 20 })
+    //     .withMessage('El codigo proveedor debe tener entre 1 y 20 caracteres'),
     body('descripcion')
         .optional({ checkFalsy: true }) // Esta bien si esta vacio o no enviado
         .isLength({ max: 255 })
