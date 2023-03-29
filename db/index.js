@@ -1,3 +1,5 @@
+//Session management
+require('dotenv').config();
 const express = require('express');
 const { connectDb } = require('./connection');
 const cors = require("cors");
@@ -8,8 +10,9 @@ const { rutasCatalogo, rutasCategoria,
     rutasSubcategoria, rutasTipoCatalogo } = require('../routes/catalogo');
 const { rutasInventario, rutasAlmacen } = require('../routes/almacen');
 const rutasUnidadMedida = require('../routes/unidad_medida');
+const rutasIniciarSesion = require('../routes/iniciarSesion');
 const { rutasIngreso } = require('../routes/inventario');
-
+// const authMiddleware = require('../middlewares/authMiddleware');
 
 
 
@@ -27,6 +30,11 @@ app.use(cors());
 connectDb();
 
 app.use(express.json());
+
+
+// Now, use the authMiddleware to protect any route you want to secure
+app.use('/api/ruta-segura', rutasIniciarSesion);
+
 
 // const UnidadMedida = require('./models/unidad_medida');
 // console.log(UnidadMedida.prototype);

@@ -1,7 +1,14 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../../connection');
 const Contacto = require('./contacto');
-const TipoUsuario = require('./tipoUsuario');
+const TipoUsuario = require('./tipo_usuario');
+// const bcrypt = require('bcrypt');
+// class Usuario extends sequelize.Model {
+//     async checkPassword(password) {
+//         // return bcrypt.compare(password, this.password);
+//         return password, this.password;
+//     }
+// }
 
 const Usuario = sequelize.define('usuario', {
     id: {
@@ -38,11 +45,14 @@ const Usuario = sequelize.define('usuario', {
     underscored: true,
     tableName: 'usuario'
 });
+Usuario.prototype.checkPassword = function (password) {
+    return password === this.password;
+};
 
-Contacto.hasMany(Usuario, { foreignKey: 'id_contacto', as: 'usuario' });
+Contacto.hasMany(Usuario, { foreignKey: 'id', as: 'usuario' });
 TipoUsuario.hasMany(Usuario, { foreignKey: 'id_tipo_usuario' });
 
-Usuario.belongsTo(Contacto, { foreignKey: 'id_contacto' });
+Usuario.belongsTo(Contacto, { foreignKey: 'id' });
 Usuario.belongsTo(TipoUsuario, { foreignKey: 'id_tipo_usuario' });
 
 module.exports = Usuario;
