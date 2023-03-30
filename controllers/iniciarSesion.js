@@ -11,6 +11,7 @@ const iniciarSesion = async (req, res, next) => {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
+
         // Generate JWT token
         const token = jwt.sign({ usuarioId: usuario.id }, process.env.JWT_SECRET, {
             expiresIn: '1h', // Token expiration time
