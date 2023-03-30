@@ -3,6 +3,9 @@ const { sequelize } = require('../../connection');
 const { Compra, Personal } = require('../otros_modulos');
 const { Almacen } = require('../almacen');
 const { ConceptoIngreso } = require('../concepto');
+const IngresoDetalle = require('./ingreso_detalle');
+const { Catalogo } = require('../catalogo');
+
 
 const Ingreso = sequelize.define('ingreso', {
     id: {
@@ -77,6 +80,12 @@ Compra.hasOne(Ingreso, { foreignKey: 'id_compra', as: 'ingreso' });
 ConceptoIngreso.hasOne(Ingreso, { foreignKey: 'id_concepto_ingreso', as: 'ingreso' });
 Personal.hasOne(Ingreso, { foreignKey: 'id_personal', as: 'ingreso' });
 Almacen.hasOne(Ingreso, { foreignKey: 'id_almacen', as: 'ingreso' });
+
+IngresoDetalle.belongsTo(Ingreso, { foreignKey: 'id_ingreso' });
+IngresoDetalle.belongsTo(Catalogo, { foreignKey: 'id_catalogo' });
+
+Ingreso.hasMany(IngresoDetalle, { foreignKey: 'id_ingreso' });
+Catalogo.hasMany(IngresoDetalle, { foreignKey: 'id_catalogo' })
 
 Ingreso.belongsTo(Compra, { foreignKey: 'id_compra', as: 'compra' });
 Ingreso.belongsTo(ConceptoIngreso, { foreignKey: 'id_concepto_ingreso', as: 'concepto_ingreso' });

@@ -52,10 +52,10 @@ const obtInventarioPorId = async (req, res, next) => {
 
         const inventario = await Inventario.findOne({
             where: { id_almacen, id_catalogo },
-            // include: [
-            //     { model: Almacen, as: 'almacen' },
-            //     { model: Catalogo, as: 'catalogo' },
-            // ],
+            include: [
+                { model: Almacen, as: 'almacen' },
+                { model: Catalogo, as: 'catalogo' },
+            ],
         });
 
         if (!inventario) {

@@ -12,7 +12,7 @@ const { rutasInventario, rutasAlmacen } = require('../routes/almacen');
 const rutasUnidadMedida = require('../routes/unidad_medida');
 const rutasIniciarSesion = require('../routes/iniciarSesion');
 const { rutasIngreso } = require('../routes/inventario');
-// const authMiddleware = require('../middlewares/authMiddleware');
+const rutasMaestroIngreso = require('../routes/maestro_ingreso');
 
 
 
@@ -57,6 +57,7 @@ app.use("/api/unidad_medida", rutasUnidadMedida);
 
 //Inventario
 app.use("/api/ingreso", rutasIngreso);
+app.use("/api/transaction-ingreso", rutasMaestroIngreso);
 
 //Utilizaremos nuestro middleware para controlar errores
 app.use(manejarError);
