@@ -20,13 +20,22 @@ const createIngresoTransaction = async (req, res) => {
 
     try {
         await sequelize.transaction(async (t) => {
-            // Update Compra
-            await Compra.update({ estado: 'procesada' }, { where: { id: id_compra }, transaction: t });
 
+            if (id_compra !== null && id_compra !== '') {
+                const compra = await Compra.findByPk(id_compra);
+
+                // Check if Compra is already processed
+
+                if (compra.estado.toLowerCase() === 'procesada') {
+                    throw new Error('Compra is already processed.');
+                }
+                // Update Compra
+                await Compra.update({ estado: 'procesada' }, { where: { id: id_compra }, transaction: t });
+            }
             // Create Ingreso
             const ingresoData = {
                 ...restForm,
-                id_compra: id_compra,
+                id_compra: (id_compra !== null && id_compra !== '') ? id_compra : null, // Set id_compra to null if it's null or an empty string
                 id_almacen: id_almacen,
                 id_personal: id_personal,
                 fecha: new Date()
