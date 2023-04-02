@@ -4,7 +4,7 @@ const { Inventario } = require('../db/models/almacen');
 const Ingreso = require('../db/models/inventario/ingreso');
 const IngresoDetalle = require('../db/models/inventario/ingreso_detalle');
 const { Compra } = require('../db/models/otros_modulos');
-
+const moment = require('moment-timezone');
 
 const createIngresoTransaction = async (req, res) => {
     const {
@@ -21,24 +21,26 @@ const createIngresoTransaction = async (req, res) => {
     try {
         await sequelize.transaction(async (t) => {
 
-            if (id_compra !== null && id_compra !== '') {
+            if (id_compra !== null && id_compra !== '' && id_compra !== undefined) {
                 const compra = await Compra.findByPk(id_compra);
 
-                // Check if Compra is already processed
-
-                if (compra.estado.toLowerCase() === 'procesada') {
-                    throw new Error('Compra is already processed.');
+                if (compra) {
+                    // Check if Compra is already processed
+                    if (compra.estado.toLowerCase() === 'procesada') {
+                        throw new Error('Compra is already processed.');
+                    }
+                    // Update Compra
+                    await Compra.update({ estado: 'procesada' }, { where: { id: id_compra }, transaction: t });
                 }
-                // Update Compra
-                await Compra.update({ estado: 'procesada' }, { where: { id: id_compra }, transaction: t });
             }
+            console.log(moment().tz('America/La_Paz').format('YYYY-MM-DD HH:mm:ss.SS'));
             // Create Ingreso
             const ingresoData = {
                 ...restForm,
                 id_compra: (id_compra !== null && id_compra !== '') ? id_compra : null, // Set id_compra to null if it's null or an empty string
                 id_almacen: id_almacen,
                 id_personal: id_personal,
-                fecha: new Date()
+                fecha: moment().tz('America/La_Paz').format('YYYY-MM-DD HH:mm:ss.SS')
             };
             const ingreso = await Ingreso.create(ingresoData, { transaction: t });
 
@@ -60,10 +62,14 @@ const createIngresoTransaction = async (req, res) => {
                 });
 
                 // Update Inventario
+                const cantidadActualizada = parseInt(inventario.cantidad_actual, 10) + parseInt(item.cantidad, 10);
+                const costoPromedioPonderado = ((parseFloat(inventario.costo_actual) * parseFloat(inventario.cantidad_actual)) + (parseFloat(item.costo_unitario) * parseFloat(item.cantidad))) / cantidadActualizada;
+
                 const inventarioData = {
-                    cantidad_actual: Sequelize.literal(`cantidad_actual + ${item.cantidad}`),
-                    costo_actual: item.costo_unitario
+                    cantidad_actual: cantidadActualizada,
+                    costo_actual: costoPromedioPonderado
                 };
+
                 await inventario.update(inventarioData, { transaction: t });
             }
         });

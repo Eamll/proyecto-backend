@@ -17,26 +17,31 @@ const mostrarCompras = async (req, res, next) => {
                 {
                     model: Personal,
                     as: 'personal',
+                    attributes: ['id'],
                     include: [
                         {
                             model: Contacto,
-                            as: 'contacto'
+                            as: 'contacto',
+                            attributes: ['id', 'nombre', 'apellido_paterno', 'apellido_materno']
                         }
                     ]
                 },
                 {
                     model: Almacen,
                     as: 'almacen',
+                    attributes: ['id', 'nombre'],
                     include: [
                         {
                             model: Sucursal,
-                            as: 'sucursal'
+                            as: 'sucursal',
+                            attributes: ['id', 'nombre']
                         }
                     ]
                 },
                 {
                     model: Proveedor,
-                    as: 'proveedor'
+                    as: 'proveedor',
+                    attributes: ['id', 'razon_social']
                 }
             ]
         });

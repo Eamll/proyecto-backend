@@ -14,6 +14,7 @@ const rutasIniciarSesion = require('../routes/iniciarSesion');
 const { rutasIngreso } = require('../routes/inventario');
 const rutasMaestroIngreso = require('../routes/maestro_ingreso');
 const rutasCompra = require('../routes/otros_modulos/compra');
+const rutasDetalleCompra = require('../routes/otros_modulos/detalle_compra');
 
 
 
@@ -62,6 +63,7 @@ app.use("/api/transaction-ingreso", rutasMaestroIngreso);
 
 //Otros modulos
 app.use("/api/compra", rutasCompra);
+app.use("/api/detalle_compra", rutasDetalleCompra);
 
 
 //Utilizaremos nuestro middleware para controlar errores
