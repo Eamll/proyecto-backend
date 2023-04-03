@@ -21,7 +21,10 @@ const rutasConceptoIngreso = require('../routes/concepto/concepto_ingreso');
 const rutasConceptoSalida = require('../routes/concepto/concepto_salida');
 
 const rutasMaestroTraspaso = require('../routes/maestro_traspaso');
-const rutasConceptotraspaso = require('../routes/concepto/concepto_traspaso');
+const rutasConceptoTraspaso = require('../routes/concepto/concepto_traspaso');
+
+const rutasMaestroAjuste = require('../routes/maestro_ajuste');
+const rutasConceptoAjuste = require('../routes/concepto/concepto_ajuste');
 
 
 
@@ -66,11 +69,13 @@ app.use("/api/ingreso", rutasIngreso);
 app.use("/api/transaction-ingreso", rutasMaestroIngreso);
 app.use("/api/transaction-salida", rutasMaestroSalida);
 app.use("/api/transaction-traspaso", rutasMaestroTraspaso);
+app.use("/api/transaction-ajuste", rutasMaestroAjuste);
 
 //Concepto
 app.use("/api/concepto_ingreso", rutasConceptoIngreso);
 app.use("/api/concepto_salida", rutasConceptoSalida);
-app.use("/api/concepto_traspaso", rutasConceptotraspaso);
+app.use("/api/concepto_traspaso", rutasConceptoTraspaso);
+app.use("/api/concepto_ajuste", rutasConceptoAjuste);
 //Otros modulos
 app.use("/api/compra", rutasCompra);
 app.use("/api/detalle_compra", rutasDetalleCompra);
