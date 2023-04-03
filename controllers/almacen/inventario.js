@@ -32,8 +32,19 @@ const crearInventario = async (req, res, next) => {
 
 const mostrarInventarios = async (req, res, next) => {
     try {
-        const inventarios = await Inventario.findAll()
+        const inventarios = await Inventario.findAll({
+            include: [
+                {
+                    model: Catalogo, as: 'catalogo',
+                    attributes: ['id', 'nombre', 'codigo_interno']
+                },
+                {
+                    model: Almacen, as: 'almacen',
+                    attributes: ['id', 'nombre']
+                }
 
+            ]
+        });
         res.send({
             status: "success",
             message: "Inventarios obtenidos satisfactoriamente",
@@ -44,6 +55,34 @@ const mostrarInventarios = async (req, res, next) => {
     }
 };
 
+const mostrarInventariosPorAlmacen = async (req, res, next) => {
+    try {
+        const { id_almacen } = req.params; // assuming almacenId is passed as a parameter in the request URL
+        const inventarios = await Inventario.findAll({
+            where: {
+                id_almacen: id_almacen
+            },
+            include: [
+                {
+                    model: Catalogo, as: 'catalogo',
+                    attributes: ['id', 'nombre', 'codigo_interno']
+                },
+                {
+                    model: Almacen, as: 'almacen',
+                    attributes: ['id', 'nombre']
+                }
+            ]
+        });
+
+        res.send({
+            status: "success",
+            message: `Inventarios del almacen ${id_almacen} obtenidos satisfactoriamente`,
+            inventarios
+        });
+    } catch (error) {
+        next(error);
+    }
+}
 
 
 const obtInventarioPorId = async (req, res, next) => {
@@ -128,5 +167,6 @@ module.exports = {
     mostrarInventarios,
     obtInventarioPorId,
     editarInventario,
-    borrarInventario
+    borrarInventario,
+    mostrarInventariosPorAlmacen
 }

@@ -1,8 +1,6 @@
-const { Sequelize } = require('sequelize');
 const { sequelize } = require('../db/connection');
 const { Inventario } = require('../db/models/almacen');
-const Ingreso = require('../db/models/inventario/ingreso');
-const IngresoDetalle = require('../db/models/inventario/ingreso_detalle');
+const { Ingreso, IngresoDetalle } = require('../db/models/inventario');
 const { Compra } = require('../db/models/otros_modulos');
 const moment = require('moment-timezone');
 
@@ -44,27 +42,40 @@ const createIngresoTransaction = async (req, res) => {
             };
             const ingreso = await Ingreso.create(ingresoData, { transaction: t });
 
-            // Create IngresoDetalle and update Inventario for each item in cart
-            for (const item of cart) {
-                const ingresoDetalleData = {
-                    id_ingreso: ingreso.id,
-                    id_catalogo: item.id,
-                    cantidad: item.cantidad,
-                    costo_unitario: item.costo_unitario
-                };
-                await IngresoDetalle.create(ingresoDetalleData, { transaction: t });
 
-                // Find or create Inventario
+            let suma_cant_precio_total = 0;
+            for (const item of cart) {
+                suma_cant_precio_total += parseFloat(item.cantidad) * parseFloat(item.costo_unitario);
+            }
+
+            let suma_costos = parseFloat(form.costo_transporte) + parseFloat(form.costo_carga) + parseFloat(form.costo_almacenes) + parseFloat(form.otros_costos);
+
+            // Crear IngresoDetalle y actualizar Inventario por cada item del carrito
+            for (const item of cart) {
+                // Buscar o crear inventario
                 const [inventario, created] = await Inventario.findOrCreate({
                     where: { id_catalogo: item.id, id_almacen: id_almacen },
                     defaults: { cantidad_actual: 0, costo_actual: 0 },
                     transaction: t
                 });
 
-                // Update Inventario
+                // Realizar cálculos adicionales
                 const cantidadActualizada = parseInt(inventario.cantidad_actual, 10) + parseInt(item.cantidad, 10);
-                const costoPromedioPonderado = ((parseFloat(inventario.costo_actual) * parseFloat(inventario.cantidad_actual)) + (parseFloat(item.costo_unitario) * parseFloat(item.cantidad))) / cantidadActualizada;
+                const porcentaje = ((parseFloat(item.cantidad) * parseFloat(item.costo_unitario)) * 100) / suma_cant_precio_total;
+                const costo_unitario_promediado = (suma_costos * porcentaje / 100) / parseFloat(item.cantidad);
 
+                // Crear IngresoDetalle con el costo_unitario_promediado
+                const ingresoDetalleData = {
+                    id_ingreso: ingreso.id,
+                    id_catalogo: item.id,
+                    cantidad: item.cantidad,
+                    costo_unitario: costo_unitario_promediado
+                };
+                await IngresoDetalle.create(ingresoDetalleData, { transaction: t });
+
+                const costoPromedioPonderado = ((parseFloat(inventario.costo_actual) * parseFloat(inventario.cantidad_actual)) + (parseFloat(costo_unitario_promediado) * parseFloat(item.cantidad))) / cantidadActualizada;
+
+                // Actualizar Inventario con el nuevo costo_actual
                 const inventarioData = {
                     cantidad_actual: cantidadActualizada,
                     costo_actual: costoPromedioPonderado
@@ -72,6 +83,8 @@ const createIngresoTransaction = async (req, res) => {
 
                 await inventario.update(inventarioData, { transaction: t });
             }
+
+
         });
 
         return res.status(200).json({ status: 'success', message: 'Transaction completed successfully.' });

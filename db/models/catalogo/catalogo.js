@@ -3,6 +3,8 @@ const { sequelize } = require('../../connection');
 const Subcategoria = require('./subcategoria');
 const TipoCatalogo = require('./tipo_catalogo');
 const UnidadMedida = require('../unidad_medida');
+
+
 const Catalogo = sequelize.define('catalogo', {
     id: {
         type: DataTypes.INTEGER,

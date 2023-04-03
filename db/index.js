@@ -16,6 +16,9 @@ const rutasMaestroIngreso = require('../routes/maestro_ingreso');
 const rutasCompra = require('../routes/otros_modulos/compra');
 const rutasDetalleCompra = require('../routes/otros_modulos/detalle_compra');
 
+const rutasMaestroSalida = require('../routes/maestro_salida');
+const rutasConceptoIngreso = require('../routes/concepto/concepto_ingreso');
+const rutasConceptoSalida = require('../routes/concepto/concepto_salida');
 
 
 
@@ -60,7 +63,11 @@ app.use("/api/unidad_medida", rutasUnidadMedida);
 //Inventario
 app.use("/api/ingreso", rutasIngreso);
 app.use("/api/transaction-ingreso", rutasMaestroIngreso);
+app.use("/api/transaction-salida", rutasMaestroSalida);
 
+//Concepto
+app.use("/api/concepto_ingreso", rutasConceptoIngreso);
+app.use("/api/concepto_salida", rutasConceptoSalida);
 //Otros modulos
 app.use("/api/compra", rutasCompra);
 app.use("/api/detalle_compra", rutasDetalleCompra);
